@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  ####################### App Definition #######################
+  winston-app:
+    restart: on-failure
+    image: winston-app:${GIT_COMMIT:-latest}
+    container_name: winston-app
+    build:
+      context: .
+    networks:
+      - default
+
+  ####################### Database Definition #######################
+  winston-database:
+    restart: on-failure
+    image: mongo:latest
+    container_name: winston-database
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-user}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-password}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
+
+####################### Networks Definition #######################
+networks:
+  default:
+    driver: bridge
+
+####################### Volumes Definition #######################
+volumes:
+  mongo-data:
