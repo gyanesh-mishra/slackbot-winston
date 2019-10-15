@@ -9,7 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"gopkg.in/jdkato/prose.v2"
+
+	prose "gopkg.in/jdkato/prose.v2"
 )
 
 func main() {
