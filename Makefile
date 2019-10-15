@@ -1,18 +1,18 @@
 #!make
 
-build:
-	@echo "+\n++ Building images ...\n+"
-	@docker-compose build --parallel
-
 run:
 	@echo "+\n++ Running application ...\n+"
-	@docker-compose up
+	@docker-compose -f deployments/docker-compose.yml  up
+
+image:
+	@echo "+\n++ Building images ...\n+"
+	@docker-compose -f deployments/docker-compose.yml  build --parallel
 
 stop:
 	@echo "+\n++ Stopping application ...\n+"
-	@docker-compose down -t 2
+	@docker-compose -f deployments/docker-compose.yml  down -t 2
 
 clean:
 	@echo "+\n++ Removing containers, images, volumes etc...\n+"
-	@docker-compose down --rmi all --volumes
-	@docker-compose rm -f -v -s
+	@docker-compose -f deployments/docker-compose.yml  down --rmi all --volumes
+	@docker-compose -f deployments/docker-compose.yml  rm -f -v -s

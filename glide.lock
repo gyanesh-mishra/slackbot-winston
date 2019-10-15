@@ -1,5 +1,5 @@
-hash: 5886b2e7d67b60569eb09091793741c927f6bac4b972e8d5436196b6cdfcf8ec
-updated: 2019-10-14T22:58:34.058114-07:00
+hash: 5ec927f3557be719ae2311cf884903a1b20821a5e7f9431bf43283d5bafdb230
+updated: 2019-10-14T23:47:27.856221-07:00
 imports:
 - name: github.com/go-stack/stack
   version: 2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a

@@ -7,7 +7,8 @@ services:
     image: winston-app:${GIT_COMMIT:-latest}
     container_name: winston-app
     build:
-      context: .
+      context: ../
+      dockerfile: build/package/Dockerfile
     networks:
       - default
 
