@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	prose "gopkg.in/jdkato/prose.v2"
+	"gopkg.in/jdkato/prose.v2"
 )
 
 func main() {

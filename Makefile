@@ -4,7 +4,7 @@ run:
 	@echo "+\n++ Running application ...\n+"
 	@docker-compose -f deployments/docker-compose.yml  up
 
-image:
+images:
 	@echo "+\n++ Building images ...\n+"
 	@docker-compose -f deployments/docker-compose.yml  build --parallel
 
