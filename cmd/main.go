@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gyanesh-mishra/slackbot-winston/config"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/routing"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,6 +18,8 @@ import (
 )
 
 func main() {
+	configuration := config.GetConfig()
+
 	doc, _ := prose.NewDocument("What is our time off policy?", prose.WithExtraction(false))
 	router := routing.GetRouter()
 	// Iterate over the doc's tokens:
@@ -30,7 +33,8 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://user:password@localhost:27017"))
+	databaseString := fmt.Sprintf("mongodb://%s:%s@%s:%d", configuration.Database.DBUser, configuration.Database.DBPassword, configuration.Database.DBHost, configuration.Database.DBPort)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(databaseString))
 	if err != nil {
 		fmt.Println("Can't connect to Mongo")
 	}
@@ -48,6 +52,7 @@ func main() {
 	}
 	fmt.Println(result)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Print(fmt.Sprintf("Running server on %s", configuration.Server.Host))
+	log.Fatal(http.ListenAndServe(configuration.Server.Host, router))
 
 }

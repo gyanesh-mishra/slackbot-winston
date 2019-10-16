@@ -1,0 +1,12 @@
+server:
+  host: 0.0.0.0:8080
+
+database:
+  dbuser: user
+  dbpassword: password
+  dbhost: localhost
+  dbport: 27017
+
+slack:
+  bottoken: bot-token
+  verificationtoken: verify-token

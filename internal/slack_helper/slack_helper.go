@@ -15,7 +15,7 @@ import (
 
 func () ListenAndResponse() {
 	api := slack.New(
-		"YOUR TOKEN HERE",
+		"SLACK_TOKEN",
 		slack.OptionDebug(true),
 		slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),
 	)

@@ -5,6 +5,10 @@ ENV PKG_NAME=github.com/gyanesh-mishra/slackbot-winston
 ENV PKG_PATH=$GOPATH/src/$PKG_NAME
 WORKDIR $PKG_PATH
 
+# Install dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
 # Copy over source files
 COPY . .
 
