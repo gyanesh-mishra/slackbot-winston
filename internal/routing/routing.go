@@ -15,7 +15,7 @@ func GetRouter() *httprouter.Router {
 	router.POST("/hello/:name", root.HandlePost)
 
 	// Handle /health path
-	router.GET("/", health.HandleGet)
+	router.GET("/health", health.HandleGet)
 
 	return router
 }
