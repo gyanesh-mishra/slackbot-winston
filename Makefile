@@ -2,6 +2,8 @@
 
 docker-compose = docker-compose -f deployments/docker-compose.yml
 
+rerun : images | run
+
 run:
 	@echo "+\n++ Running application ...\n+"
 	@$(docker-compose) up

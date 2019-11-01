@@ -11,15 +11,16 @@ import (
 	"github.com/gyanesh-mishra/slackbot-winston/internal/routing"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"gopkg.in/jdkato/prose.v2"
 )
 
 func main() {
+
+	// Get configuration object
 	configuration := config.GetConfig()
 
+	// Break the input into tokens
 	doc, _ := prose.NewDocument("What is our time off policy?", prose.WithExtraction(false))
 	router := routing.GetRouter()
 	// Iterate over the doc's tokens:
@@ -33,11 +34,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	databaseString := fmt.Sprintf("mongodb://%s:%s@%s:%d", configuration.Database.DBUser, configuration.Database.DBPassword, configuration.Database.DBHost, configuration.Database.DBPort)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(databaseString))
-	if err != nil {
-		fmt.Println("Can't connect to Mongo")
-	}
+	client := configuration.Database.Client
 
 	var result struct {
 		Value string
@@ -46,7 +43,7 @@ func main() {
 
 	collection := client.Database("winston").Collection("questions")
 	collection.InsertOne(ctx, bson.M{"keyword": "guiding", "value": "check drive"})
-	err = collection.FindOne(ctx, filter).Decode(&result)
+	err := collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
