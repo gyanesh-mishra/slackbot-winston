@@ -4,6 +4,12 @@ docker-compose = docker-compose -f deployments/docker-compose.yml
 
 rerun : images | run
 
+local-dev:
+	@echo "+\n++ Running application locally for development ...\n+"
+	if ! test -s air; then curl -fLo air https://raw.githubusercontent.com/cosmtrek/air/master/bin/darwin/air && chmod +x air; fi
+	./air -c air.conf
+	endif
+
 run:
 	@echo "+\n++ Running application ...\n+"
 	@$(docker-compose) up

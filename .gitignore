@@ -15,5 +15,12 @@ vendor/
 # Test binary, build with `go test -c`
 *.test
 
+# Environment files
+*.env
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Hot reloading air directories and binaries
+tmp/
+air

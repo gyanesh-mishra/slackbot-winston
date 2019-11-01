@@ -1,5 +1,10 @@
 package root
 
-type IncomingGetResponse struct {
-	Success bool `json:"success,omitempty"`
+// GetResponse exported
+type GetResponse struct {
+	message string
+}
+
+type SlackEventModel struct {
+	message string
 }
