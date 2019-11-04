@@ -1,4 +1,4 @@
-# Winston
+# Winston [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3ff58876c279451eb5ef1367e2d6aa0b)](https://www.codacy.com/manual/gyanesh-mishra/slackbot-winston?utm_source=github.com&utm_medium=referral&utm_content=gyanesh-mishra/slackbot-winston&utm_campaign=Badge_Grade) [![Go Report Card](https://goreportcard.com/badge/github.com/gyanesh-mishra/slackbot-winston)](https://goreportcard.com/report/github.com/gyanesh-mishra/slackbot-winston)
 
 Winston is your trusty slackbot here to service all your questions and needs.
 
@@ -37,12 +37,12 @@ It will build the images, run the database and application container.
 
 ## Currently in Progress
 
-1. Personality (Add some more human prompts to responses)
-2. Slash commands for slack
-3. Logo and branding
-4. Super easy to teach
+1.  Personality (Add some more human prompts to responses)
+2.  Slash commands for slack
+3.  Logo and branding
+4.  Super easy to teach
 
 ## Upcoming
 
-1. Website (AngularJS)
-2. Tests (Unit/EE)
+1.  Website (AngularJS)
+2.  Tests (Unit/EE)
