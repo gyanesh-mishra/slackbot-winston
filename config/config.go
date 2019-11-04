@@ -4,26 +4,25 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Configuration exported
+// Configuration for the application
 type Configuration struct {
 	Server   ServerConfiguration
 	Database DatabaseConfiguration
 	Slack    SlackConfiguration
 }
 
-// ServerConfiguration exported
+// ServerConfiguration holds the webserver configuration
 type ServerConfiguration struct {
 	Host string
 }
 
-// DatabaseConfiguration exported
+// DatabaseConfiguration holds the database connection configuration
 type DatabaseConfiguration struct {
 	DBUser     string
 	DBPassword string
@@ -32,13 +31,13 @@ type DatabaseConfiguration struct {
 	Client     *mongo.Client
 }
 
-// SlackConfiguration exported
+// SlackConfiguration holds the slack app connection configuration
 type SlackConfiguration struct {
 	BotToken          string
 	VerificationToken string
 }
 
-// GetConfig exported
+// GetConfig reads the configuration file and returns a Configuration object
 func GetConfig() Configuration {
 	// Set the file name of the configurations file
 	viper.SetConfigName("config/config")
@@ -72,13 +71,10 @@ func GetConfig() Configuration {
 
 // Private function to get database connection based on config
 func getDatabaseConnection(configuration Configuration) *mongo.Client {
-	// Get application context
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 
 	// Get database connection
 	databaseString := fmt.Sprintf("mongodb://%s:%s@%s:%d", configuration.Database.DBUser, configuration.Database.DBPassword, configuration.Database.DBHost, configuration.Database.DBPort)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(databaseString))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(databaseString))
 	if err != nil {
 		fmt.Println("Can't connect to Mongo")
 	}

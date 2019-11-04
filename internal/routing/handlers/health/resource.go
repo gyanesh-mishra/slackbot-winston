@@ -7,12 +7,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// GetResponse model exported
+// GetResponse defines the HTTP response model for an incoming GET request
 type GetResponse struct {
 	Success bool `json:"success,omitempty"`
 }
 
-// HandleGet exported
+// HandleGet handles the incoming HTTP GET request
 func HandleGet(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var response GetResponse
 	response.Success = true

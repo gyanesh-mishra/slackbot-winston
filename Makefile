@@ -16,7 +16,7 @@ run:
 
 database:
 	@echo "+\n++ Running database in daemon ...\n+"
-	@$(docker-compose) up -d winston-database
+	@$(docker-compose) up -d winston-database winston-database-gui
 
 images:
 	@echo "+\n++ Building images ...\n+"
