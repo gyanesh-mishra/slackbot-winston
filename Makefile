@@ -7,6 +7,10 @@ app:
 	@echo "+\n++ Running application in background...\n+"
 	@$(docker-compose) up
 
+app-logs:
+	@echo "+\n++ Following app container for logs...\n+"
+	@docker logs -f winston-app
+
 database:
 	@echo "+\n++ Running database in background...\n+"
 	@$(docker-compose) up -d winston-database winston-database-gui
@@ -21,7 +25,7 @@ build-prod:
 
 app-prod:
 	@echo "+\n++ Running application in production mode...\n+"
-	@$(docker-compose-prod) up
+	@$(docker-compose-prod) up -d
 
 stop:
 	@echo "+\n++ Stopping application ...\n+"

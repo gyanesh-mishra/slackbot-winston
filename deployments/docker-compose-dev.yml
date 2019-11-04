@@ -4,12 +4,15 @@ services:
   ####################### Hot reloading app container definition #######################
   winston-app:
     restart: on-failure
-    image: cosmtrek/air
+    image: winston-app
     container_name: winston-app
     working_dir: /go/src/github.com/gyanesh-mishra/slackbot-winston
     command: -c air.conf
     ports:
       - 8080:8080
+    build:
+      context: ../
+      dockerfile: build/package/Dockerfile.dev
     volumes:
       - ../:/go/src/github.com/gyanesh-mishra/slackbot-winston
     environment:
