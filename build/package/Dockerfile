@@ -1,4 +1,8 @@
-FROM golang:alpine
+# The following dockerfile is used for producing
+# production build artifacts.
+
+# Use the alpine golang image to download dependencies and build the application
+FROM golang:alpine as build-env
 
 # Set the Current Working Directory inside the container
 ENV PKG_NAME=github.com/gyanesh-mishra/slackbot-winston
@@ -15,5 +19,15 @@ COPY . .
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o slackbot-winston cmd/main.go
 
-# Run the application
-CMD ["./slackbot-winston"]
+# Use the base alpine image for the production application image
+FROM alpine
+
+# Set the Current Working Directory inside the container
+ENV SRC_PATH=/go/src/github.com/gyanesh-mishra/slackbot-winston
+ENV DEST_PATH=/opt/slackbot-winston
+WORKDIR $DEST_PATH
+
+# Copy over artifacts from builder image
+COPY --from=build-env $SRC_PATH $DEST_PATH
+
+ENTRYPOINT ./slackbot-winston

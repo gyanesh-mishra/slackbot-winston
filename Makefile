@@ -1,26 +1,27 @@
 #!make
 
-docker-compose = docker-compose -f deployments/docker-compose.yml
+docker-compose = docker-compose -f deployments/docker-compose-dev.yml
+docker-compose-prod = docker-compose -f deployments/docker-compose-prod.yml
 
-rerun : images | run
-
-local-dev:
-	@echo "+\n++ Running application locally for development ...\n+"
-	if ! test -s air; then curl -fLo air https://raw.githubusercontent.com/cosmtrek/air/master/bin/darwin/air && chmod +x air; fi
-	./air -c air.conf
-	endif
-
-run:
-	@echo "+\n++ Running application ...\n+"
+app:
+	@echo "+\n++ Running application in background...\n+"
 	@$(docker-compose) up
 
 database:
-	@echo "+\n++ Running database in daemon ...\n+"
+	@echo "+\n++ Running database in background...\n+"
 	@$(docker-compose) up -d winston-database winston-database-gui
 
-images:
-	@echo "+\n++ Building images ...\n+"
+build-local:
+	@echo "+\n++ Building images for local development ...\n+"
 	@$(docker-compose) build --parallel
+
+build-prod:
+	@echo "+\n++ Building images for production use...\n+"
+	@$(docker-compose-prod) build --parallel
+
+app-prod:
+	@echo "+\n++ Running application in production mode...\n+"
+	@$(docker-compose-prod) up
 
 stop:
 	@echo "+\n++ Stopping application ...\n+"

@@ -1,3 +1,8 @@
 build/
 deployments/
 vendor/
+tmp/
+main/
+
+**/.git
+**/.DS_Store

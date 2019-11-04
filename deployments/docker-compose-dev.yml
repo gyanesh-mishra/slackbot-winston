@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  ####################### Hot reloading app container definition #######################
+  winston-app:
+    restart: on-failure
+    image: cosmtrek/air
+    container_name: winston-app
+    working_dir: /go/src/github.com/gyanesh-mishra/slackbot-winston
+    command: -c air.conf
+    ports:
+      - 8080:8080
+    volumes:
+      - ../:/go/src/github.com/gyanesh-mishra/slackbot-winston
+    environment:
+      - WINSTON_SLACK_BOTTOKEN=${WINSTON_SLACK_BOTTOKEN:-bottoken}
+      - WINSTON_SLACK_VERIFICATIONTOKEN=${WINSTON_SLACK_VERIFICATIONTOKEN:-verifytoken}
+      - WINSTON_DATABASE_DBHOST=winston-database
+    depends_on:
+      - winston-database
+    networks:
+      - winston
+
+  ####################### Database definition #######################
+  winston-database:
+    restart: on-failure
+    image: mongo
+    container_name: winston-database
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - winston
+
+  ####################### Database GUI definition #######################
+  winston-database-gui:
+    restart: on-failure
+    image: mongo-express
+    container_name: winston-database-gui
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=user
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=winston-database
+    depends_on:
+      - winston-database
+    networks:
+      - winston
+
+####################### Networks Definition #######################
+networks:
+  winston:
+    driver: bridge
+
+####################### Volumes Definition #######################
+volumes:
+  mongo-data:
