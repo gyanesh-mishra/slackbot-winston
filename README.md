@@ -37,12 +37,12 @@ It will build the images, run the database and application container.
 
 ## Currently in Progress
 
-1.  Personality (Add some more human prompts to responses)
-2.  Slash commands for slack
-3.  Logo and branding
-4.  Super easy to teach
+1. Personality (Add some more human prompts to responses)
+2. Slash commands for slack
+3. Logo and branding
+4. Super easy to teach
 
 ## Upcoming
 
-1.  Website (AngularJS)
-2.  Tests (Unit/EE)
+1. Website (AngularJS)
+2. Tests (Unit/EE)
