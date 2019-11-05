@@ -19,11 +19,11 @@ For local development, it's using [Air](https://github.com/cosmtrek/air) for Liv
 
 Here's a list of libraries that are being used:
 
-- [HTTPRouter](https://github.com/julienschmidt/httprouter)
-- [Slack](https://github.com/nlopes/slack)
-- [Viper](https://github.com/spf13/viper)
-- [Mongo](https://github.com/mongodb/mongo-go-driver)
-- [Prose V.2](https://github.com/jdkato/prose)
+-   [HTTPRouter](https://github.com/julienschmidt/httprouter)
+-   [Slack](https://github.com/nlopes/slack)
+-   [Viper](https://github.com/spf13/viper)
+-   [Mongo](https://github.com/mongodb/mongo-go-driver)
+-   [Prose V.2](https://github.com/jdkato/prose)
 
 ## Development
 
@@ -31,18 +31,18 @@ To get started you need Docker and Docker-Compose installed.
 Look at Makefile for more information. But you can get started by running `make app`.
 It will build the images, run the database and application container.
 
-- The App container runs on Port 8080
-- Mongo runs on port 27017
-- Mongo Express runs on port 8081
+-   The App container runs on Port 8080
+-   Mongo runs on port 27017
+-   Mongo Express runs on port 8081
 
 ## Currently in Progress
 
-1. Personality (Add some more human prompts to responses)
-2. Slash commands for slack
-3. Logo and branding
-4. Super easy to teach
+1.  Personality (Add some more human prompts to responses)
+2.  Slash commands for slack
+3.  Logo and branding
+4.  Super easy to teach
 
 ## Upcoming
 
-1. Website (AngularJS)
-2. Tests (Unit/EE)
+1.  Website (AngularJS)
+2.  Tests (Unit/EE)
