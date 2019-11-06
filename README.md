@@ -35,6 +35,8 @@ It will build the images, run the database and application container.
 -   Mongo runs on port 27017
 -   Mongo Express runs on port 8081
 
+P.S. I've been using [this repo](https://github.com/golang-standards/project-layout) as an inspiration.
+
 ## Currently in Progress
 
 1.  Personality (Add some more human prompts to responses)

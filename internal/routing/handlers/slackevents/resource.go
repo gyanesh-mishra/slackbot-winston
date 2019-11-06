@@ -3,6 +3,8 @@ package slackevents
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"regexp"
 
@@ -14,18 +16,6 @@ import (
 	"github.com/nlopes/slack"
 	"github.com/nlopes/slack/slackevents"
 )
-
-// GetResponse defines the HTTP response model for an incoming GET request
-type GetResponse struct {
-	message string
-}
-
-// HandleGet handles the incoming HTTP GET request
-func HandleGet(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var response GetResponse
-	response.message = "Hello!"
-	json.NewEncoder(w).Encode(response)
-}
 
 // HandlePost handles the incoming HTTP POST request
 func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -73,13 +63,21 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 		// Remove any user mentions
 		re := regexp.MustCompile(`<@[^>]*>`)
 		message := re.ReplaceAllString(ev.Text, "")
+		log.Print(fmt.Sprintf("Incoming Mention Event: %+v\n", ev))
 
+		// Get the answer from the database
 		response, err := questionAnswerDAO.GetAnswerByQuestion(message)
+
+		// If no answers were found, prompt channel to help
 		if err != nil {
-			response = "I don't understand, please educate me"
+			helpAnswerMessage := slack.MsgOptionAttachments(helpAnswerAttachment)
+			response = fmt.Sprintf("Dang, Nothing in my database :worried:")
+			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), helpAnswerMessage)
+			return
+
 		}
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
 	default:
-		//fmt.Printf("Uncaught Event %+v", ev)
+		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))
 	}
 }

@@ -5,7 +5,7 @@ docker-compose-prod = docker-compose -f deployments/docker-compose-prod.yml
 
 app:
 	@echo "+\n++ Running application in background...\n+"
-	@$(docker-compose) up
+	@$(docker-compose) up -d
 
 app-logs:
 	@echo "+\n++ Following app container for logs...\n+"

@@ -4,6 +4,7 @@ import (
 	"github.com/gyanesh-mishra/slackbot-winston/internal/routing/handlers/health"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/routing/handlers/questionanswer"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/routing/handlers/slackevents"
+	"github.com/gyanesh-mishra/slackbot-winston/internal/routing/handlers/slackinteractions"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -15,9 +16,11 @@ func GetRouter() *httprouter.Router {
 	// Handle / path
 	router.GET("/", health.HandleGet)
 
-	// Handle /slackevent path
-	router.GET("/slack-event", slackevents.HandleGet)
+	// Handle /slack-event path
 	router.POST("/slack-event", slackevents.HandlePost)
+
+	// Handle /slack-interactions path
+	router.POST("/slack-interactions", slackinteractions.HandlePost)
 
 	// Handle /question-answer path
 	router.GET("/question-answer", questionanswer.HandleGet)
