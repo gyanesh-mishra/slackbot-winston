@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nlopes/slack"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,6 +36,7 @@ type DatabaseConfiguration struct {
 type SlackConfiguration struct {
 	BotToken          string
 	VerificationToken string
+	Client            *slack.Client
 }
 
 // GetConfig reads the configuration file and returns a Configuration object
@@ -65,6 +67,8 @@ func GetConfig() Configuration {
 
 	// Add database connection client to the global configuration object
 	configuration.Database.Client = getDatabaseConnection(configuration)
+	// Add slack client to global configuration object
+	configuration.Slack.Client = slack.New(configuration.Slack.BotToken)
 
 	return configuration
 }

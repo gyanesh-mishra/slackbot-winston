@@ -20,6 +20,7 @@ import (
 // HandlePost handles the incoming HTTP POST request
 func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var configuration = config.GetConfig()
+	var api = configuration.Slack.Client
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)
@@ -38,7 +39,6 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Slack messages in channel
 	if eventsAPIEvent.Type == slackevents.CallbackEvent {
-		var api = slack.New(configuration.Slack.BotToken)
 		handleCallbackEvent(w, api, eventsAPIEvent.InnerEvent)
 	}
 }
@@ -70,12 +70,14 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		// If no answers were found, prompt channel to help
 		if err != nil {
-			helpAnswerMessage := slack.MsgOptionAttachments(helpAnswerAttachment)
-			response = fmt.Sprintf("Dang, Nothing in my database :worried:")
+			helpAnswerMessage := slack.MsgOptionAttachments(getAnswerNotFoundAttachment(message))
+			response = fmt.Sprintf("I can't seem to remember atm, :thinking_face: Can someone help me out?")
 			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), helpAnswerMessage)
 			return
 
 		}
+
+		// Respond with the answer
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))
