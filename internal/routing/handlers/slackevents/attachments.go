@@ -20,5 +20,4 @@ func getAnswerNotFoundAttachment(question string) slack.Attachment {
 			},
 		},
 	}
-
 }

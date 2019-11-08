@@ -6,7 +6,7 @@ At its very core, it's a simple key-value store backed by a mongo-database.
 
 It's heavily under development, but winston uses Natural Language Processing under the hood to be a bit smarter.
 
-Winston uses [Prove V.2](https://github.com/jdkato/prose) to parse out relevant speech tokens and respond accordingly.
+Winston uses [Prose V.2](https://github.com/jdkato/prose) to parse out relevant speech tokens and respond accordingly.
 Currently if you teach winston, "Can you tell me X", it's able to respond to "Do you know about X", "Where can I find info about X", "What is X" and a few other combinations with the same answer.
 
 ## Language and Libraries

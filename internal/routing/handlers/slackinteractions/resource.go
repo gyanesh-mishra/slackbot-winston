@@ -16,6 +16,7 @@ import (
 // HandlePost handles the incoming HTTP POST request
 func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var configuration = config.GetConfig()
+	var slackAPI = configuration.Slack.Client
 
 	var payload slack.InteractionCallback
 	err := json.Unmarshal([]byte(r.FormValue("payload")), &payload)
@@ -43,7 +44,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		responseMessage.Attachments = append(responseMessage.Attachments, slack.Attachment{
 			Text:       fmt.Sprintf("<@%s> is helping me! :fire: ", payload.User.ID),
 			Color:      "#062F67",
-			CallbackID: "none_id_plez",
+			CallbackID: "untracked_event",
 		})
 
 		// Return new response to be updated
@@ -52,7 +53,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 		// Prompt the volunteer for answer
 		dialog := getUserAnswerForQuestionDialog(payload.OriginalMessage.Attachments[0].Text, payload.TriggerID)
-		defer configuration.Slack.Client.OpenDialog(payload.TriggerID, dialog)
+		defer slackAPI.OpenDialog(payload.TriggerID, dialog)
 		return
 	case constants.AnswerUserInputDialogID:
 		// User has provided answer for the question, store it in DB
@@ -61,10 +62,22 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			if err != nil {
 				fmt.Printf("Error adding QnA : %+v\n", err)
 			}
+			// Post on the channel about learning new information
+			defer sendUserConfirmation(question, answer, payload.Channel.ID, slackAPI)
 		}
 
 	default:
 		log.Print(fmt.Sprintf("Unhandled Callback ID: %+v\n", payload))
 	}
 
+}
+
+func sendUserConfirmation(question string, answer string, channel string, slackAPI *slack.Client) {
+	responseAttachment := slack.MsgOptionAttachments(slack.Attachment{
+		Text:       fmt.Sprintf("Question : %s \n Answer : %s", question, answer),
+		Color:      "#062F67",
+		CallbackID: "untracked_event",
+	})
+	responseTitle := "I just learnt something new!"
+	slackAPI.PostMessage(channel, slack.MsgOptionText(responseTitle, false), responseAttachment)
 }
