@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
 
 	"github.com/gyanesh-mishra/slackbot-winston/config"
+	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/nlopes/slack"
@@ -60,24 +60,22 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 	switch ev := innerEvent.Data.(type) {
 	case *slackevents.AppMentionEvent:
 
-		// Remove any user mentions
-		re := regexp.MustCompile(`<@[^>]*>`)
-		message := re.ReplaceAllString(ev.Text, "")
-		log.Print(fmt.Sprintf("Incoming Mention Event: %+v\n", ev))
+		// Sanitize user input and extract question from the input
+		question := helpers.ExtractQuestionFromMessage(ev.Text)
 
 		// Get the answer from the database
-		response, err := questionAnswerDAO.GetAnswerByQuestion(message)
+		answer, err := questionAnswerDAO.GetAnswerByQuestion(question)
 
 		// If no answers were found, prompt channel to help
 		if err != nil {
-			helpAnswerMessage := slack.MsgOptionAttachments(getAnswerNotFoundAttachment(message))
-			response = fmt.Sprintf("I can't seem to remember atm, :thinking_face: Can someone help me out?")
-			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), helpAnswerMessage)
+			responseAttachment := slack.MsgOptionAttachments(getAnswerNotFoundAttachment(question))
+			response := fmt.Sprintf("I can't seem to remember atm, :thinking_face: Can someone help me out?")
+			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 			return
 
 		}
 
-		// Respond with the answer
+		response := fmt.Sprintf("Question : %s \n Answer : %s", question, answer)
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))

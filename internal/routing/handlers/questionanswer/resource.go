@@ -3,10 +3,10 @@ package questionanswer
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
+	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -17,8 +17,6 @@ func HandleGet(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-
-	fmt.Printf("RES : %+v\n", res)
 
 	json.NewEncoder(w).Encode(res)
 }
@@ -42,7 +40,9 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	res, err := questionAnswerDAO.Add(data.Question, data.Answer)
+	// Sanitize the question before inserting
+	question := helpers.ExtractQuestionFromMessage(data.Question)
+	res, err := questionAnswerDAO.Add(question, data.Answer)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
