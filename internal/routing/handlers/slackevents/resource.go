@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
+	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 
 	"github.com/gyanesh-mishra/slackbot-winston/config"
-	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/nlopes/slack"
@@ -60,8 +60,11 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 	switch ev := innerEvent.Data.(type) {
 	case *slackevents.AppMentionEvent:
 
-		// Sanitize user input and extract question from the input
-		question := helpers.ExtractQuestionFromMessage(ev.Text)
+		// Remove user mentions
+		question := helpers.RemoveUserMention(ev.Text)
+
+		// Sanitize input
+		question = helpers.ExtractQuestionFromMessage(question)
 
 		// Get the answer from the database
 		answer, err := questionAnswerDAO.GetAnswerByQuestion(question)
@@ -75,8 +78,12 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		}
 
-		response := fmt.Sprintf("Question : %s \n Answer : %s", question, answer)
-		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
+		// Respond with answer found in the database
+		response := "Found an answer! :smile:"
+		attachmentMessage := fmt.Sprintf("%s \n %s", question, answer)
+		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))
+		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
+		return
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))
 	}

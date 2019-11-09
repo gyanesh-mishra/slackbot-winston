@@ -52,7 +52,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		json.NewEncoder(w).Encode(responseMessage)
 
 		// Prompt the volunteer for answer
-		dialog := getUserAnswerForQuestionDialog(payload.OriginalMessage.Attachments[0].Text, payload.TriggerID)
+		dialog := getUserAnswerForQuestionDialog(payload.OriginalMessage.Attachments[0].Text, payload.TriggerID, constants.AnswerUserInputDialogID)
 		defer slackAPI.OpenDialog(payload.TriggerID, dialog)
 		return
 	case constants.AnswerUserInputDialogID:
@@ -65,7 +65,26 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			// Post on the channel about learning new information
 			defer sendUserConfirmation(question, answer, payload.Channel.ID, slackAPI)
 		}
+	case constants.AnswerFoundUpdateAttachmentID:
 
+		// Update the original message and append helper name as attachment
+		responseMessage := payload.OriginalMessage
+		responseMessage.ResponseType = "in_channel"
+		responseMessage.ReplaceOriginal = true
+		responseMessage.Attachments[0].Actions = nil
+		responseMessage.Attachments = append(responseMessage.Attachments, slack.Attachment{
+			Text:       fmt.Sprintf("<@%s> is updating this answer :raised_hands: ", payload.User.ID),
+			CallbackID: "untracked_event",
+		})
+
+		// Return new response to be updated
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(responseMessage)
+
+		// Prompt the volunteer for answer
+		dialog := getUserAnswerForQuestionDialog(payload.OriginalMessage.Attachments[0].Text, payload.TriggerID, constants.AnswerUserInputDialogID)
+		defer slackAPI.OpenDialog(payload.TriggerID, dialog)
+		return
 	default:
 		log.Print(fmt.Sprintf("Unhandled Callback ID: %+v\n", payload))
 	}

@@ -1,14 +1,13 @@
 package slackinteractions
 
 import (
-	"github.com/gyanesh-mishra/slackbot-winston/internal/constants"
 	"github.com/nlopes/slack"
 )
 
-func getUserAnswerForQuestionDialog(question string, triggerID string) slack.Dialog {
+func getUserAnswerForQuestionDialog(question string, triggerID string, callbackID string) slack.Dialog {
 	return slack.Dialog{
 		TriggerID:   triggerID,
-		CallbackID:  constants.AnswerUserInputDialogID,
+		CallbackID:  callbackID,
 		Title:       "Thanks for sharing!",
 		SubmitLabel: "Submit",
 		Elements: []slack.DialogElement{

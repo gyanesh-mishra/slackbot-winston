@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -34,22 +35,33 @@ func IsStringInSlice(input string, slice []string) bool {
 
 // ExtractQuestionFromMessage sanitizes input message and extracts query from it
 func ExtractQuestionFromMessage(message string) string {
-	// Make all strings lowercase
-	question := strings.ToLower(message)
 
-	// Filter out @user mentions
-	re := regexp.MustCompile(`<@[^>]*>`)
-	question = re.ReplaceAllString(question, "")
+	question := message
 
-	// Replace any greetings
+	// Filter out any greetings
 	greetings := []string{"hi", "hello", "hey", "good morning", "morning", "good day", "good afternoon",
-		"good evening", "greetings", "how's it going", "what's up", "howdy", " i "}
+		"good evening", "greetings", "how's it going", "what's up", "howdy"}
 	for _, greeting := range greetings {
-		question = strings.ReplaceAll(question, greeting, "")
+		// Match whole words only using word boundaries
+		currentGreetingRegex := regexp.MustCompile(fmt.Sprintf(`\b(?i)(%s)\b`, greeting))
+		question = currentGreetingRegex.ReplaceAllString(question, "")
 	}
 
-	// Trim any additional whitespace
+	// Trim any un-necessary whitespace
 	question = strings.TrimSpace(question)
 
 	return question
+}
+
+// RemoveUserMention removes any user mentions from the string
+func RemoveUserMention(message string) string {
+
+	userRegex := regexp.MustCompile(`<@[^>]*>`)
+	message = userRegex.ReplaceAllString(message, "")
+
+	// Remove any trailing whitespaces
+	message = strings.ReplaceAll(message, "  ", " ")
+	message = strings.TrimSpace(message)
+
+	return message
 }

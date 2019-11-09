@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/gyanesh-mishra/slackbot-winston/config"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
@@ -69,6 +70,8 @@ func GetAll() (QuestionAnswers, error) {
 // Add inserts a new record and returns the ID
 func Add(question string, answer string) (interface{}, error) {
 
+	question = strings.ToLower(question)
+
 	// Break the question into keywords
 	keywords := helpers.GetNLPKeywords(question)
 
@@ -86,6 +89,8 @@ func Add(question string, answer string) (interface{}, error) {
 
 // GetAnswerByQuestion returns an answer from the database matching the question passed
 func GetAnswerByQuestion(question string) (string, error) {
+
+	question = strings.ToLower(question)
 
 	// Break the question into keywords
 	keywords := helpers.GetNLPKeywords(question)
