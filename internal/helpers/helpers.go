@@ -43,7 +43,7 @@ func ExtractQuestionFromMessage(message string) string {
 
 	// Replace any greetings
 	greetings := []string{"hi", "hello", "hey", "good morning", "morning", "good day", "good afternoon",
-		"good evening", "greetings", "how's it going", "what's up", "howdy", " i ", "i "}
+		"good evening", "greetings", "how's it going", "what's up", "howdy", " i "}
 	for _, greeting := range greetings {
 		question = strings.ReplaceAll(question, greeting, "")
 	}
