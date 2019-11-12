@@ -1,9 +1,0 @@
-# The dev container uses comstrek/air for hot reloading of golang apps
-# https://github.com/cosmtrek/air
-
-FROM cosmtrek/air
-
-# Update golang version to latest
-WORKDIR /tmp
-RUN git clone https://github.com/udhos/update-golang
-RUN cd update-golang && ./update-golang.sh
