@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
@@ -67,7 +68,7 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 		question = helpers.ExtractQuestionFromMessage(question)
 
 		// Get the answer from the database
-		answer, err := questionAnswerDAO.GetAnswerByQuestion(question)
+		result, err := questionAnswerDAO.GetByQuestion(question)
 
 		// If no answers were found, prompt channel to help
 		if err != nil {
@@ -81,7 +82,8 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		// Respond with answer found in the database
 		response := "Found an answer! :smile:"
-		attachmentMessage := fmt.Sprintf("%s \n _%s_", question, answer)
+		resultLastUpdated := time.Now().UTC().Sub(result.LastUpdated).Round(time.Second)
+		attachmentMessage := fmt.Sprintf("%s \n _%s_ \n \n Last updated by %s %s ago", question, result.Answer, result.LastUpdatedBy, resultLastUpdated)
 		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 		return

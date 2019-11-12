@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/gyanesh-mishra/slackbot-winston/config"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
@@ -15,9 +16,11 @@ import (
 
 // QuestionAnswer base database model
 type QuestionAnswer struct {
-	Question string   `bson:"question" json:"question"`
-	Keywords []string `bson:"keywords" json:"keywords"`
-	Answer   string   `bson:"answer" json:"answer"`
+	Question      string    `bson:"question" json:"question"`
+	Keywords      []string  `bson:"keywords" json:"keywords"`
+	Answer        string    `bson:"answer" json:"answer"`
+	LastUpdated   time.Time `bson:"lastUpdated" json:"lastUpdated"`
+	LastUpdatedBy string    `bson:"lastUpdatedBy" json:"lastUpdatedBy"`
 }
 
 // QuestionAnswers is a list of QuestionAnswer
@@ -67,8 +70,8 @@ func GetAll() (QuestionAnswers, error) {
 	return results, nil
 }
 
-// Add inserts a new record and returns the ID
-func AddOrUpdate(question string, answer string) (interface{}, error) {
+// AddOrUpdate inserts or updates a record and return it
+func AddOrUpdate(question string, answer string, updatedBy string) (interface{}, error) {
 
 	// Store all questions as lowercase for saving time on case sensitivity search
 	question = strings.ToLower(question)
@@ -80,7 +83,13 @@ func AddOrUpdate(question string, answer string) (interface{}, error) {
 	collection := getCollection()
 
 	// Construct the object
-	data := QuestionAnswer{Question: question, Keywords: keywords, Answer: answer}
+	data := QuestionAnswer{
+		Question:      question,
+		Keywords:      keywords,
+		Answer:        answer,
+		LastUpdatedBy: updatedBy,
+		LastUpdated:   time.Now().UTC(),
+	}
 
 	// Construct filters for upsert
 	filter := bson.M{
@@ -100,8 +109,8 @@ func AddOrUpdate(question string, answer string) (interface{}, error) {
 
 }
 
-// GetAnswerByQuestion returns an answer from the database matching the question passed
-func GetAnswerByQuestion(question string) (string, error) {
+// GetByQuestion returns an answer from the database matching the question passed
+func GetByQuestion(question string) (QuestionAnswer, error) {
 
 	// Convert incoming question to lowercase for search
 	question = strings.ToLower(question)
@@ -123,8 +132,8 @@ func GetAnswerByQuestion(question string) (string, error) {
 	err := collection.FindOne(context.TODO(), filters).Decode(&result)
 	if err != nil {
 		log.Print(fmt.Sprintf("Error while searching for question: %s, with keywords: %s", question, keywords))
-		return "", err
+		return QuestionAnswer{}, err
 	}
 
-	return result.Answer, nil
+	return result, nil
 }

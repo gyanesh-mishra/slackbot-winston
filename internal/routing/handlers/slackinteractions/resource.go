@@ -59,7 +59,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case constants.AnswerUserInputDialogID:
 		// User has provided answer for the question, store it in DB
 		for question, answer := range payload.DialogSubmissionCallback.Submission {
-			_, err := questionAnswerDAO.AddOrUpdate(question, answer)
+			_, err := questionAnswerDAO.AddOrUpdate(question, answer, payload.User.Name)
 			if err != nil {
 				fmt.Printf("Error adding QnA : %+v\n", err)
 			}
@@ -98,7 +98,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func sendUserConfirmation(question string, answer string, channel string, slackAPI *slack.Client) {
 	responseAttachment := slack.MsgOptionAttachments(slack.Attachment{
-		Text:       fmt.Sprintf("Question : %s \n Answer : %s", question, answer),
+		Text:       fmt.Sprintf("*%s* \n _%s_", question, answer),
 		Color:      "#062F67",
 		CallbackID: "untracked_event",
 	})
