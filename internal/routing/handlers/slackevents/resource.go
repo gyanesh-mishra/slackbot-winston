@@ -71,6 +71,7 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		// If no answers were found, prompt channel to help
 		if err != nil {
+			question = fmt.Sprintf("%s", question)
 			responseAttachment := slack.MsgOptionAttachments(getAnswerNotFoundAttachment(question))
 			response := fmt.Sprintf("I can't seem to remember atm, :thinking_face: Can someone help me out?")
 			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
@@ -80,7 +81,7 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		// Respond with answer found in the database
 		response := "Found an answer! :smile:"
-		attachmentMessage := fmt.Sprintf("%s \n %s", question, answer)
+		attachmentMessage := fmt.Sprintf("%s \n _%s_", question, answer)
 		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 		return

@@ -42,7 +42,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Sanitize the question before inserting
 	question := helpers.ExtractQuestionFromMessage(data.Question)
-	res, err := questionAnswerDAO.Add(question, data.Answer)
+	res, err := questionAnswerDAO.AddOrUpdate(question, data.Answer)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}

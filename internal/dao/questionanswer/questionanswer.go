@@ -15,9 +15,9 @@ import (
 
 // QuestionAnswer base database model
 type QuestionAnswer struct {
-	Question string   `json:"question"`
-	Keywords []string `json:"keywords"`
-	Answer   string   `json:"answer"`
+	Question string   `bson:"question" json:"question"`
+	Keywords []string `bson:"keywords" json:"keywords"`
+	Answer   string   `bson:"answer" json:"answer"`
 }
 
 // QuestionAnswers is a list of QuestionAnswer
@@ -68,28 +68,42 @@ func GetAll() (QuestionAnswers, error) {
 }
 
 // Add inserts a new record and returns the ID
-func Add(question string, answer string) (interface{}, error) {
+func AddOrUpdate(question string, answer string) (interface{}, error) {
 
+	// Store all questions as lowercase for saving time on case sensitivity search
 	question = strings.ToLower(question)
 
 	// Break the question into keywords
 	keywords := helpers.GetNLPKeywords(question)
 
-	// Store the answer with keywords
-	record := QuestionAnswer{Question: question, Keywords: keywords, Answer: answer}
+	// Get the database collection
 	collection := getCollection()
-	res, err := collection.InsertOne(context.TODO(), record)
+
+	// Construct the object
+	data := QuestionAnswer{Question: question, Keywords: keywords, Answer: answer}
+
+	// Construct filters for upsert
+	filter := bson.M{
+		"$or": []interface{}{
+			bson.M{"question": question},
+			bson.M{"keywords": keywords},
+		},
+	}
+	update := bson.M{"$set": data}
+
+	// Upsert the answer
+	res, err := collection.UpdateOne(context.TODO(), filter, update, options.Update().SetUpsert(true))
 	if err != nil {
 		return nil, err
 	}
-	id := res.InsertedID
+	return res, nil
 
-	return id, nil
 }
 
 // GetAnswerByQuestion returns an answer from the database matching the question passed
 func GetAnswerByQuestion(question string) (string, error) {
 
+	// Convert incoming question to lowercase for search
 	question = strings.ToLower(question)
 
 	// Break the question into keywords

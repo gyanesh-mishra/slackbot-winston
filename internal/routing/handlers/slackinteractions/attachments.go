@@ -8,7 +8,7 @@ func getUserAnswerForQuestionDialog(question string, triggerID string, callbackI
 	return slack.Dialog{
 		TriggerID:   triggerID,
 		CallbackID:  callbackID,
-		Title:       "Thanks for sharing!",
+		Title:       "Submit your answer",
 		SubmitLabel: "Submit",
 		Elements: []slack.DialogElement{
 			slack.DialogInput{

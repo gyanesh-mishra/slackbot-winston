@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gyanesh-mishra/slackbot-winston/config"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/constants"
@@ -58,7 +59,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case constants.AnswerUserInputDialogID:
 		// User has provided answer for the question, store it in DB
 		for question, answer := range payload.DialogSubmissionCallback.Submission {
-			_, err := questionAnswerDAO.Add(question, answer)
+			_, err := questionAnswerDAO.AddOrUpdate(question, answer)
 			if err != nil {
 				fmt.Printf("Error adding QnA : %+v\n", err)
 			}
@@ -81,8 +82,12 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(responseMessage)
 
-		// Prompt the volunteer for answer
-		dialog := getUserAnswerForQuestionDialog(payload.OriginalMessage.Attachments[0].Text, payload.TriggerID, constants.AnswerUserInputDialogID)
+		// Extract the question from the message
+		message := payload.OriginalMessage.Attachments[0].Text
+		messageSlices := strings.Split(message, "\n")
+		question := messageSlices[0]
+		// Prompt with a dialog to update the answer
+		dialog := getUserAnswerForQuestionDialog(question, payload.TriggerID, constants.AnswerUserInputDialogID)
 		defer slackAPI.OpenDialog(payload.TriggerID, dialog)
 		return
 	default:
