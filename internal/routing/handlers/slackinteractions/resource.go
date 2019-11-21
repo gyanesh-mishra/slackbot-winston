@@ -10,6 +10,7 @@ import (
 	"github.com/gyanesh-mishra/slackbot-winston/config"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/constants"
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
+	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 	"github.com/julienschmidt/httprouter"
 	"github.com/nlopes/slack"
 )
@@ -102,6 +103,6 @@ func sendUserConfirmation(question string, answer string, channel string, slackA
 		Color:      "#062F67",
 		CallbackID: "untracked_event",
 	})
-	responseTitle := "I just learnt something new!"
+	responseTitle := helpers.GetRandomStringFromSlice(constants.NewAnswerMessages)
 	slackAPI.PostMessage(channel, slack.MsgOptionText(responseTitle, false), responseAttachment)
 }

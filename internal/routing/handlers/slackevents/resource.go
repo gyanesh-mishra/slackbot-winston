@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gyanesh-mishra/slackbot-winston/internal/constants"
 	questionAnswerDAO "github.com/gyanesh-mishra/slackbot-winston/internal/dao/questionanswer"
 	"github.com/gyanesh-mishra/slackbot-winston/internal/helpers"
 
@@ -66,6 +67,20 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 
 		// Sanitize input
 		question = helpers.ExtractQuestionFromMessage(question)
+		// Exit if there is no question
+		if question == "" {
+			response := helpers.GetRandomStringFromSlice(constants.GreetingMessages)
+			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
+			return
+		}
+
+		// Any question that has less than 10 characters is probably jumbled
+		// TODO: Change this to count words or do better
+		if len(question) < 10 {
+			response := "I don't know how to answer that :thinking_face:"
+			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false))
+			return
+		}
 
 		// Get the answer from the database
 		result, err := questionAnswerDAO.GetByQuestion(question)
@@ -74,14 +89,14 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 		if err != nil {
 			question = fmt.Sprintf("%s", question)
 			responseAttachment := slack.MsgOptionAttachments(getAnswerNotFoundAttachment(question))
-			response := fmt.Sprintf("I can't seem to remember atm, :thinking_face: Can someone help me out?")
+			response := helpers.GetRandomStringFromSlice(constants.AnswerNotFoundMessages)
 			api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 			return
 
 		}
 
 		// Respond with answer found in the database
-		response := "Found an answer! :smile:"
+		response := helpers.GetRandomStringFromSlice(constants.AnswerFoundMessages)
 		resultLastUpdated := time.Now().UTC().Sub(result.LastUpdated).Round(time.Second)
 		attachmentMessage := fmt.Sprintf("%s \n _%s_ \n \n Last updated by %s %s ago", question, result.Answer, result.LastUpdatedBy, resultLastUpdated)
 		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))

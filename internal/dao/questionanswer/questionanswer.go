@@ -131,7 +131,7 @@ func GetByQuestion(question string) (QuestionAnswer, error) {
 	}
 	err := collection.FindOne(context.TODO(), filters).Decode(&result)
 	if err != nil {
-		log.Print(fmt.Sprintf("Error while searching for question: %s, with keywords: %s", question, keywords))
+		log.Print(fmt.Sprintf("Error while searching for question: %s with keywords: %s", question, keywords))
 		return QuestionAnswer{}, err
 	}
 

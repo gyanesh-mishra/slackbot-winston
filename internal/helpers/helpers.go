@@ -2,8 +2,10 @@ package helpers
 
 import (
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 
 	"gopkg.in/jdkato/prose.v2"
 )
@@ -40,7 +42,7 @@ func ExtractQuestionFromMessage(message string) string {
 
 	// Filter out any greetings
 	greetings := []string{"hi", "hello", "hey", "good morning", "morning", "good day", "good afternoon",
-		"good evening", "greetings", "how's it going", "what's up", "howdy"}
+		"good evening", "greetings", "how's it going", "what's up", "howdy", "sup"}
 	for _, greeting := range greetings {
 		// Match whole words only using word boundaries
 		currentGreetingRegex := regexp.MustCompile(fmt.Sprintf(`\b(?i)(%s)\b`, greeting))
@@ -64,4 +66,11 @@ func RemoveUserMention(message string) string {
 	message = strings.TrimSpace(message)
 
 	return message
+}
+
+// GetRandomStringFromSlice returns a random item from a slice
+func GetRandomStringFromSlice(slice []string) string {
+	rand.Seed(time.Now().UnixNano())
+
+	return slice[rand.Intn(len(slice))]
 }
