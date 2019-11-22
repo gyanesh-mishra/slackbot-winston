@@ -14,7 +14,7 @@ services:
     environment:
       - WINSTON_SLACK_BOTTOKEN=${WINSTON_SLACK_BOTTOKEN:-bottoken}
       - WINSTON_SLACK_VERIFICATIONTOKEN=${WINSTON_SLACK_VERIFICATIONTOKEN:-verifytoken}
-      - WINSTON_DATABASE_DBHOST=winston-database
+      - WINSTON_DATABASE_DBHOST=${WINSTON_DATABASE_DBHOST:-winston-database}
     depends_on:
       - winston-database
     networks:
