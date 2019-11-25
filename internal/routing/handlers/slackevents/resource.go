@@ -110,7 +110,14 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, event slackev
 		return
 	case *slackevents.MessageEvent:
 		if ev.SubType == "bot_add" {
-			fmt.Printf("BOT ADDED : %+v\n", event)
+			_, _, channelID, err := api.OpenIMChannel(ev.User)
+
+			if err != nil {
+				fmt.Printf("%s\n", err)
+			}
+
+			api.PostMessage(channelID, slack.MsgOptionText("Thank you for adding me to the workspace!", false))
+			return
 		}
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))
