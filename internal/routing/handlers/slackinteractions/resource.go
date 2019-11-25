@@ -32,7 +32,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
 
-	log.Print(fmt.Sprintf("Interaction Endpoint log: %+v\n", payload))
+	//log.Print(fmt.Sprintf("Interaction Endpoint log: %+v\n", payload))
 
 	switch payload.CallbackID {
 	case constants.AnswerNotFoundAttachmentID:
@@ -60,7 +60,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case constants.AnswerUserInputDialogID:
 		// User has provided answer for the question, store it in DB
 		for question, answer := range payload.DialogSubmissionCallback.Submission {
-			_, err := questionAnswerDAO.AddOrUpdate(question, answer, payload.User.Name)
+			_, err := questionAnswerDAO.AddOrUpdate(question, answer, payload.User.Name, payload.Team.ID)
 			if err != nil {
 				fmt.Printf("Error adding QnA : %+v\n", err)
 			}

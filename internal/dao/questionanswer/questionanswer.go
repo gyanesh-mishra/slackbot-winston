@@ -19,6 +19,7 @@ type QuestionAnswer struct {
 	Question      string    `bson:"question" json:"question"`
 	Keywords      []string  `bson:"keywords" json:"keywords"`
 	Answer        string    `bson:"answer" json:"answer"`
+	TeamID        string    `bson:"teamID" json:"teamID"`
 	LastUpdated   time.Time `bson:"lastUpdated" json:"lastUpdated"`
 	LastUpdatedBy string    `bson:"lastUpdatedBy" json:"lastUpdatedBy"`
 }
@@ -71,7 +72,7 @@ func GetAll() (QuestionAnswers, error) {
 }
 
 // AddOrUpdate inserts or updates a record and return it
-func AddOrUpdate(question string, answer string, updatedBy string) (interface{}, error) {
+func AddOrUpdate(question string, answer string, updatedBy string, teamID string) (interface{}, error) {
 
 	// Store all questions as lowercase for saving time on case sensitivity search
 	question = strings.ToLower(question)
@@ -87,12 +88,14 @@ func AddOrUpdate(question string, answer string, updatedBy string) (interface{},
 		Question:      question,
 		Keywords:      keywords,
 		Answer:        answer,
+		TeamID:        teamID,
 		LastUpdatedBy: updatedBy,
 		LastUpdated:   time.Now().UTC(),
 	}
 
 	// Construct filters for upsert
 	filter := bson.M{
+		"teamID": teamID,
 		"$or": []interface{}{
 			bson.M{"question": question},
 			bson.M{"keywords": keywords},
@@ -110,7 +113,7 @@ func AddOrUpdate(question string, answer string, updatedBy string) (interface{},
 }
 
 // GetByQuestion returns an answer from the database matching the question passed
-func GetByQuestion(question string) (QuestionAnswer, error) {
+func GetByQuestion(question string, teamID string) (QuestionAnswer, error) {
 
 	// Convert incoming question to lowercase for search
 	question = strings.ToLower(question)
@@ -124,6 +127,7 @@ func GetByQuestion(question string) (QuestionAnswer, error) {
 
 	// Match either question or keywords
 	filters := bson.M{
+		"teamID": teamID,
 		"$or": []interface{}{
 			bson.M{"question": question},
 			bson.M{"keywords": keywords},

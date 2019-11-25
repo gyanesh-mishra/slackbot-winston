@@ -29,8 +29,14 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	body := buf.String()
 
 	// Check if the request is valid and coming from Events API
-	eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: configuration.Slack.VerificationToken}))
+	// TODO: Update tokens auth to OAuth Flow
+	eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body),
+		slackevents.OptionVerifyToken(
+			&slackevents.TokenComparator{VerificationToken: configuration.Slack.VerificationToken},
+		),
+	)
 	if e != nil {
+		log.Printf("Error parsing slack event %+v\n", e)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
@@ -41,7 +47,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Slack messages in channel
 	if eventsAPIEvent.Type == slackevents.CallbackEvent {
-		handleCallbackEvent(w, api, eventsAPIEvent.InnerEvent)
+		handleCallbackEvent(w, api, eventsAPIEvent)
 	}
 }
 
@@ -57,9 +63,9 @@ func handleURLVerificationEvent(w http.ResponseWriter, body string) {
 }
 
 // handleCallbackEvent handles the Slack messages event
-func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent slackevents.EventsAPIInnerEvent) {
+func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, event slackevents.EventsAPIEvent) {
 
-	switch ev := innerEvent.Data.(type) {
+	switch ev := event.InnerEvent.Data.(type) {
 	case *slackevents.AppMentionEvent:
 
 		// Remove user mentions
@@ -83,7 +89,7 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 		}
 
 		// Get the answer from the database
-		result, err := questionAnswerDAO.GetByQuestion(question)
+		result, err := questionAnswerDAO.GetByQuestion(question, event.TeamID)
 
 		// If no answers were found, prompt channel to help
 		if err != nil {
@@ -102,6 +108,10 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, innerEvent sl
 		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 		return
+	case *slackevents.MessageEvent:
+		if ev.SubType == "bot_add" {
+			fmt.Printf("%+v\n", event.InnerEvent.Data)
+		}
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))
 	}

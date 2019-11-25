@@ -25,6 +25,7 @@ func HandleGet(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 type PostRequestQuestionAnswer struct {
 	Question  string `json:"question"`
 	Answer    string `json:"answer"`
+	TeamID    string `json:"teamID"`
 	UpdatedBy string `json:"updatedBy"`
 }
 
@@ -43,7 +44,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 	// Sanitize the question before inserting
 	question := helpers.ExtractQuestionFromMessage(data.Question)
-	res, err := questionAnswerDAO.AddOrUpdate(question, data.Answer, data.UpdatedBy)
+	res, err := questionAnswerDAO.AddOrUpdate(question, data.Answer, data.UpdatedBy, data.TeamID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
