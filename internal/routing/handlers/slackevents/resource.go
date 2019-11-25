@@ -103,14 +103,14 @@ func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, event slackev
 
 		// Respond with answer found in the database
 		response := helpers.GetRandomStringFromSlice(constants.AnswerFoundMessages)
-		resultLastUpdated := time.Now().UTC().Sub(result.LastUpdated).Round(time.Second)
+		resultLastUpdated := time.Now().UTC().Sub(result.LastUpdated).Round(time.Hour)
 		attachmentMessage := fmt.Sprintf("%s \n _%s_ \n \n Last updated by %s %s ago", question, result.Answer, result.LastUpdatedBy, resultLastUpdated)
 		responseAttachment := slack.MsgOptionAttachments(getAnswerFoundAttachment(attachmentMessage))
 		api.PostMessage(ev.Channel, slack.MsgOptionText(response, false), responseAttachment)
 		return
 	case *slackevents.MessageEvent:
 		if ev.SubType == "bot_add" {
-			fmt.Printf("%+v\n", event.InnerEvent.Data)
+			fmt.Printf("BOT ADDED : %+v\n", event)
 		}
 	default:
 		log.Print(fmt.Sprintf("Uncaught Event: %+v\n", ev))

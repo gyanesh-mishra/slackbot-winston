@@ -27,6 +27,21 @@ type QuestionAnswer struct {
 // QuestionAnswers is a list of QuestionAnswer
 type QuestionAnswers []*QuestionAnswer
 
+// CreateIndexes creates the indexes and escalates any errors
+func CreateIndexes() error {
+	collection := getCollection()
+	indexes := []mongo.IndexModel{
+		{
+			Keys: bson.M{"teamID": 1, "question": 1, "keyword": 1},
+		},
+	}
+
+	opts := options.CreateIndexes().SetMaxTime(10 * time.Second)
+	_, err := collection.Indexes().CreateMany(context.TODO(), indexes, opts)
+
+	return err
+}
+
 // getCollection returns the QuestionAnswer mongo collection object
 func getCollection() *mongo.Collection {
 	// Get the database client object
