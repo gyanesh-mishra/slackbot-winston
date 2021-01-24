@@ -2,8 +2,6 @@ package questionanswer
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -150,7 +148,6 @@ func GetByQuestion(question string, teamID string) (QuestionAnswer, error) {
 	}
 	err := collection.FindOne(context.TODO(), filters).Decode(&result)
 	if err != nil {
-		log.Print(fmt.Sprintf("Error while searching for question: %s with keywords: %s", question, keywords))
 		return QuestionAnswer{}, err
 	}
 

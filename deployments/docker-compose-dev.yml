@@ -11,7 +11,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ../:/go/src/github.com/gyanesh-mishra/slackbot-winston
+      - ../.:/go/src/github.com/gyanesh-mishra/slackbot-winston
     environment:
       - WINSTON_SLACK_BOTTOKEN=${WINSTON_SLACK_BOTTOKEN:-bottoken}
       - WINSTON_SLACK_VERIFICATIONTOKEN=${WINSTON_SLACK_VERIFICATIONTOKEN:-verifytoken}

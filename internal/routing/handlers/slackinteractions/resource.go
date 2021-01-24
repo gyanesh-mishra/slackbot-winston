@@ -32,8 +32,6 @@ func HandlePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
 
-	//log.Print(fmt.Sprintf("Interaction Endpoint log: %+v\n", payload))
-
 	switch payload.CallbackID {
 	case constants.AnswerNotFoundAttachmentID:
 		// Answer was not found in the database, get answer from a volunteer

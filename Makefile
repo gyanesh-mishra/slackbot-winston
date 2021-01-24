@@ -31,6 +31,10 @@ stop:
 	@echo "+\n++ Stopping application ...\n+"
 	@$(docker-compose) down -t 2
 
+restart:
+	@echo "+\n++ Restaring application ...\n+"
+	@$(docker-compose) restart
+
 clean:
 	@echo "+\n++ Removing containers, images, volumes etc...\n+"
 	@$(docker-compose) down --rmi all --volumes

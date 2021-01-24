@@ -49,8 +49,9 @@ func ExtractQuestionFromMessage(message string) string {
 		question = currentGreetingRegex.ReplaceAllString(question, "")
 	}
 
-	// Trim any un-necessary whitespace
+	// Trim any un-necessary whitespace and user mentions
 	question = strings.TrimSpace(question)
+	question = RemoveUserMention(question)
 
 	return question
 }

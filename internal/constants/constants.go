@@ -22,23 +22,23 @@ var GreetingMessages = []string{
 
 // AnswerNotFoundMessages contains messages for when an answer is not in the DB.
 var AnswerNotFoundMessages = []string{
-	"I can't seem to remember atm, :thinking_face: Can someone help me out?",
+	"I can't seem to remember ath the moment, :thinking_face: Can someone help me out?",
 	"I'm stumped, can someone jog my memory? :sweat:",
-	"Aw man, I knew I should've taken it easy last night :stuck_out_tongue:, Who can help?",
-	"I can only remember so much ¯\\_(ツ)_/¯, I bet you someone can remind me.",
+	"Aw man, I knew I should've taken it easy last night :stuck_out_tongue:, Can anyone help?",
+	"I don't know _yet_, but I will soon!",
 }
 
 // AnswerFoundMessages contains messages for when an answer is in the DB.
 var AnswerFoundMessages = []string{
 	"Found an answer! :smile:",
 	"Here you go! :smile:",
-	"OOH I know! :raising_hand:",
-	"This is what I know",
+	"Is this correct? :raising_hand:",
+	"This is what I know, is it still accurate?",
 }
 
 // NewAnswerMessages contains messages for when a new answer is added to the DB.
 var NewAnswerMessages = []string{
 	"I just learnt something new!",
 	"Is this considered machine learning? :wink:",
-	"Thank you helping me :)",
+	"I feel smarter now!",
 }

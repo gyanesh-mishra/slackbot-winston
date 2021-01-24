@@ -64,7 +64,6 @@ func handleURLVerificationEvent(w http.ResponseWriter, body string) {
 
 // handleCallbackEvent handles the Slack messages event
 func handleCallbackEvent(w http.ResponseWriter, api *slack.Client, event slackevents.EventsAPIEvent) {
-
 	switch ev := event.InnerEvent.Data.(type) {
 	case *slackevents.AppMentionEvent:
 
